@@ -3,28 +3,37 @@ const bodyParser=require('body-parser');
 const cors=require('cors');
 const {ethers}=require('ethers');
 const app=express();
-const mysql = require('mysql2');
+// const mysql = require('mysql2');
 // const fetch=require('node-fetch');
 // const socketIO=require('socket.io');
 const { Alchemy, Network, Utils, Contract } = require("alchemy-sdk");
-const  { ETH_USDC_PAIR_ABI_STRING, UNISWAP_V2_PAIR_CONTRACT_ADDRESS }=require('./abi.js');
+// const  { ETH_USDC_PAIR_ABI_STRING, UNISWAP_V2_PAIR_CONTRACT_ADDRESS }=require('./abi.js');
 
 
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
+// const connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'WalletNotification'
+// })
 
+let userAddress;
+let userMessage;
 
 app.post('/webhook', (req, res) => {
     // Process the incoming webhook payload here
     //console.log('Webhook payload:', req.body.event.activity);
-    console.log(req.body);
+    // console.log(req.body);
 
-    // let userAddress = req.body.event.activity[0].toAddress;
-    // let userMessage = `You received ${req.body.event.activity[0].value} ${req.body.event.activity[0].asset} from ${req.body.event.activity[0].fromAddress}`;
+    let userAddress = req.body.event.activity[0].toAddress;
+    let userMessage = `Transaction on chain ${req.body.event.activity[0].value} ${req.body.event.activity[0].asset} from ${req.body.event.activity[0].fromAddress}`;
 
-    // console.log(userAddress);
-    // console.log(userMessage);
+    console.log(userAddress);
+    console.log(userMessage);
+  
 
     // Store the data in the database
     // const query = 'INSERT INTO notification (userAddress, notification_msg, isRead) VALUES (?,?,?)';
@@ -44,27 +53,11 @@ app.post('/webhook', (req, res) => {
 });
 
 
-app.get('/notifications', (req, res) => {
-    const userAddress = req.query.userAddress;
+app.get('/webhook2', (req, res) => {
+    console.log("webhook get ")
 
-    console.log(userAddress);
-    // Query to fetch notifications for a given userId
-    const query = 'SELECT * FROM notification WHERE userAddress = ?';
+    res.json({send:userAddress});
 
-    connection.query(query, [userAddress], (err, results) => {
-        if (err) {
-            console.error('Error fetching notifications from MySQL:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-            return;
-        }
-
-        let finalResult = {
-            status: true,
-            result : results
-        }
-        console.log(results);
-        res.json(finalResult);
-    });
 });
 
 
