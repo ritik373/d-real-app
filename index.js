@@ -20,8 +20,8 @@ app.use(bodyParser.json());
 //     database: 'WalletNotification'
 // })
 
-let userAddress;
-let userMessage;
+// let userAddress;
+// let userMessage;
 
 app.post('/webhook', (req, res) => {
     // Process the incoming webhook payload here
